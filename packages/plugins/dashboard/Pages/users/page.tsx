@@ -1,4 +1,4 @@
-import { route } from "@memtori/router";
+import { route } from "@zed/router";
 import { use } from "react";
 
 export default (props) => {

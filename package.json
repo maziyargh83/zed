@@ -1,5 +1,5 @@
 {
-  "name": "memtori",
+  "name": "zed",
   "private": true,
   "scripts": {
     "build": "turbo run build",

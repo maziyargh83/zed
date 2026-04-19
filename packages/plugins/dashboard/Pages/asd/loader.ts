@@ -1,4 +1,4 @@
-import { notFound } from "@memtori/router";
+import { notFound } from "@zed/router";
 
 const fetchPosts = async () => {
   try {

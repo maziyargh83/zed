@@ -1,1 +1,1 @@
-import {} from "@memtori/router";
+import {} from "@zed/router";

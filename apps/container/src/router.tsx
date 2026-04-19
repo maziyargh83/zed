@@ -1,4 +1,4 @@
-import { RouterProvider, type AnyRouter } from "@memtori/router";
+import { RouterProvider, type AnyRouter } from "@zed/router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Fragment, use } from "react";
 
