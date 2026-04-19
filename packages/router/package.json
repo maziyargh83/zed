@@ -1,0 +1,30 @@
+{
+  "name": "@memtori/router",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": " vite build"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.168.18",
+    "@tanstack/router-plugin": "^1.167.22",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "vite": "^8.0.4",
+    "typescript": "~6.0.2",
+    "@vitejs/plugin-react": "^6.0.1"
+  }
+}
