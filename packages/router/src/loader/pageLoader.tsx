@@ -3,17 +3,13 @@ import { getPageName, isLazyLoader, isLazyPage } from "../utils/utils";
 import {
   AnyRoute,
   createLazyRoute,
-  createRootRoute,
   createRoute,
   createRouter,
   lazyFn,
   Outlet,
+  RootRoute,
 } from "@tanstack/react-router";
 import { CreateRouterOptions, PageRouter } from "../types";
-
-export const rootRoute = createRootRoute({
-  notFoundComponent: () => <div>Not Found</div>,
-});
 
 export function createAppRouter<T>({
   layoutComponent = () => <Outlet />,
@@ -22,7 +18,7 @@ export function createAppRouter<T>({
   const ScopeRoutes: AnyRoute[] = [];
   const layout = `${id}-layout`;
   const layoutRoute = createRoute({
-    getParentRoute: () => rootRoute,
+    getParentRoute: () => getRootRouter(),
     id: layout,
     component: layoutComponent,
     notFoundComponent(props) {
@@ -42,11 +38,6 @@ export function createAppRouter<T>({
       const pages: AnyRoute[] = [];
       const url = `/${id}/${path}`;
       const url_path = `/${layout}/${id}/${path}`;
-
-      console.log({
-        url,
-        url_path,
-      });
 
       const pageRoute = createRoute({
         getParentRoute: () => layoutRoute,
@@ -88,12 +79,6 @@ export function createAppRouter<T>({
   };
 }
 
-const pluginRoutesModules = import.meta.glob(
-  "../../../plugins/**/Pages/**/route.tsx",
-
-  {}
-);
-
 type Plugin = {
   default: ReturnType<typeof createAppRouter>;
   pages: () => Record<string, Promise<Promise<() => ReactNode>>>;
@@ -110,6 +95,12 @@ export async function getLoaderFn(path: string, data: Plugin["pages"]) {
 }
 export async function loadRoutes() {
   const apps: AnyRoute[] = [];
+  const pluginRoutesModules = import.meta.glob(
+    "../../../plugins/**/Pages/**/route.tsx",
+
+    {}
+  );
+
   for (let [path, file] of Object.entries(pluginRoutesModules)) {
     const plugin = (await await file()) as Plugin;
     const appRootRoue = plugin.default;
@@ -123,7 +114,6 @@ export async function loadRoutes() {
       const loader = isLazy
         ? await getLoaderFn(pagePath, plugin.pages)
         : page?.loader;
-      console.log({ loader });
 
       appRootRoue.page({
         path: url,
@@ -137,22 +127,50 @@ export async function loadRoutes() {
   }
   return apps;
 }
-export const apps = loadRoutes();
 
-export const getRoute = () => {
-  const route = apps.then((item) => {
-    const routeTree = rootRoute.addChildren(item);
+type createRouterOptionsType = Exclude<
+  Parameters<typeof createRouter>["0"],
+  "routeTree"
+>;
+interface ICreateZedRouterProps extends createRouterOptionsType {
+  rootRouter: RootRoute;
+}
 
-    const router = createRouter({
-      routeTree,
-      defaultPreload: "intent",
-      defaultStaleTime: 5000,
-      scrollRestoration: true,
-      defaultPendingComponent: () => "uuuuuuu",
-    });
-    return router;
-  });
-  return () => {
-    return route;
+const persistedCreateZedRouter = () => {
+  let storeRoute: RootRoute;
+  return {
+    createZedRouter: ({
+      rootRouter,
+      ...tanstakProps
+    }: Partial<ICreateZedRouterProps>) => {
+      if (!rootRouter) return;
+      if (!storeRoute) storeRoute = rootRouter;
+
+      const apps = loadRoutes();
+      return apps.then((item) => {
+        const routeTree = rootRouter.addChildren(item);
+
+        return createRouter({
+          routeTree,
+          defaultPreload: "intent",
+          defaultStaleTime: 5000,
+          scrollRestoration: true,
+          defaultPendingComponent: () => "uuuuuuu",
+          ...tanstakProps,
+        });
+      });
+    },
+    getRootRouterFn: () => storeRoute,
   };
 };
+
+const { createZedRouter, getRootRouterFn } = persistedCreateZedRouter();
+
+function getRootRouter() {
+  const RootRouter = getRootRouterFn();
+
+  if (!RootRouter) throw Error("Root Router not fount!");
+  if ("then" in RootRouter) throw Error("Root Router not created!");
+  return RootRouter;
+}
+export { createZedRouter };

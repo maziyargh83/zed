@@ -1,5 +1,3 @@
-import { getRoute } from "./loader/pageLoader";
-
 export {
   RouterProvider,
   createRouter,
@@ -9,4 +7,4 @@ export {
 } from "@tanstack/react-router";
 
 export * from "./loader/pageLoader";
-export const route = getRoute();
+export { createRootRoute } from "@tanstack/react-router";
