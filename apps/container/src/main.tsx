@@ -1,9 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Router } from "./router";
-import { createRootRoute, createZedRouter } from "@zed/router";
-const rootRouter = createRootRoute({
+import { createRootRouteWithContext, createZedRouter } from "@zed/router";
+const rootRouter = createRootRouteWithContext()({
   notFoundComponent: () => <div>Not Found</div>,
+  context: () => ({
+    hello: "hi",
+  }),
 });
 const router = createZedRouter({
   rootRouter: rootRouter,

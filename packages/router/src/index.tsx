@@ -7,4 +7,8 @@ export {
 } from "@tanstack/react-router";
 
 export * from "./loader/pageLoader";
-export { createRootRoute } from "@tanstack/react-router";
+export {
+  createRootRoute,
+  RootRoute,
+  createRootRouteWithContext,
+} from "@tanstack/react-router";

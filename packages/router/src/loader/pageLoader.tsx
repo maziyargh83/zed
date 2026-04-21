@@ -133,7 +133,7 @@ type createRouterOptionsType = Exclude<
   "routeTree"
 >;
 interface ICreateZedRouterProps extends createRouterOptionsType {
-  rootRouter: RootRoute;
+  rootRouter: RootRoute<unknown, any, any, any>;
 }
 
 const persistedCreateZedRouter = () => {
@@ -142,7 +142,7 @@ const persistedCreateZedRouter = () => {
     createZedRouter: ({
       rootRouter,
       ...tanstakProps
-    }: Partial<ICreateZedRouterProps>) => {
+    }: ICreateZedRouterProps) => {
       if (!rootRouter) return;
       if (!storeRoute) storeRoute = rootRouter;
 
