@@ -3,6 +3,7 @@ import { RouteComponent } from "@tanstack/react-router";
 export interface CreateRouterOptions {
   layoutComponent?: RouteComponent;
   id: string;
+  useIdPrefix?: boolean;
 }
 
 export interface PageRouter {

@@ -10,11 +10,11 @@ import {
   RootRoute,
 } from "@tanstack/react-router";
 import { CreateRouterOptions, PageRouter } from "../types";
-import Module from "module";
 
 export function createAppRouter<T>({
   layoutComponent = () => <Outlet />,
   id,
+  useIdPrefix = true,
 }: CreateRouterOptions) {
   const ScopeRoutes: AnyRoute[] = [];
   const layout = `${id}-layout`;
@@ -37,8 +37,10 @@ export function createAppRouter<T>({
       lazyPath,
     }: PageRouter & Partial<Parameters<typeof createRoute>["0"]>) => {
       const pages: AnyRoute[] = [];
-      const url = `/${id}/${path}`;
-      const url_path = `/${layout}/${id}/${path}`;
+      const idPrefix = useIdPrefix ? `/${id}/` : "";
+      path = path == "index" ? "/" : path;
+      const url = `${idPrefix}${path}`;
+      const url_path = `/${layout}${idPrefix}${path}`;
 
       const pageRoute = createRoute({
         getParentRoute: () => layoutRoute,

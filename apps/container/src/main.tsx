@@ -4,13 +4,11 @@ import { Router } from "./router";
 import { createRootRouteWithContext, createZedRouter } from "@zed/router";
 const rootRouter = createRootRouteWithContext()({
   notFoundComponent: () => <div>Not Found</div>,
-  context: () => ({
-    hello: () => Date.now(),
-  }),
 });
-const plugins = import.meta.glob(
-  "../../../packages/plugins/**/Pages/**/route.tsx"
-);
+const plugins = import.meta.glob([
+  "../../../packages/plugins/**/Pages/**/route.tsx",
+  "./routes/**/route.tsx",
+]);
 const router = createZedRouter({
   rootRouter: rootRouter,
   plugins,
