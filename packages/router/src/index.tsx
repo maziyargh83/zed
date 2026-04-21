@@ -11,4 +11,5 @@ export {
   createRootRoute,
   RootRoute,
   createRootRouteWithContext,
+  useRouter,
 } from "@tanstack/react-router";

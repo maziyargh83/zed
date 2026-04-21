@@ -5,7 +5,7 @@ import { createRootRouteWithContext, createZedRouter } from "@zed/router";
 const rootRouter = createRootRouteWithContext()({
   notFoundComponent: () => <div>Not Found</div>,
   context: () => ({
-    hello: "hi",
+    hello: () => Date.now(),
   }),
 });
 const router = createZedRouter({

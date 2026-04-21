@@ -137,20 +137,21 @@ interface ICreateZedRouterProps extends createRouterOptionsType {
 }
 
 const persistedCreateZedRouter = () => {
-  let storeRoute: RootRoute;
+  let storedRootRouter: RootRoute;
+  let storedRouter: ReturnType<typeof createRouter>;
   return {
     createZedRouter: ({
       rootRouter,
       ...tanstakProps
     }: ICreateZedRouterProps) => {
       if (!rootRouter) return;
-      if (!storeRoute) storeRoute = rootRouter;
+      if (!storedRootRouter) storedRootRouter = rootRouter;
 
       const apps = loadRoutes();
       return apps.then((item) => {
         const routeTree = rootRouter.addChildren(item);
 
-        return createRouter({
+        storedRouter = createRouter({
           routeTree,
           defaultPreload: "intent",
           defaultStaleTime: 5000,
@@ -158,19 +159,22 @@ const persistedCreateZedRouter = () => {
           defaultPendingComponent: () => "uuuuuuu",
           ...tanstakProps,
         });
+        return storedRouter;
       });
     },
-    getRootRouterFn: () => storeRoute,
+    getRootRouterFn: () => storedRootRouter,
+    getRouter: () => storedRouter,
   };
 };
 
-const { createZedRouter, getRootRouterFn } = persistedCreateZedRouter();
+const { createZedRouter, getRootRouterFn, getRouter } =
+  persistedCreateZedRouter();
 
-function getRootRouter() {
+export function getRootRouter() {
   const RootRouter = getRootRouterFn();
 
   if (!RootRouter) throw Error("Root Router not fount!");
   if ("then" in RootRouter) throw Error("Root Router not created!");
   return RootRouter;
 }
-export { createZedRouter };
+export { createZedRouter, getRouter };
