@@ -177,4 +177,5 @@ export function getRootRouter() {
   if ("then" in RootRouter) throw Error("Root Router not created!");
   return RootRouter;
 }
+
 export { createZedRouter, getRouter };
