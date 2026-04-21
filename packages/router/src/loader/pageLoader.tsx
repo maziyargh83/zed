@@ -10,6 +10,7 @@ import {
   RootRoute,
 } from "@tanstack/react-router";
 import { CreateRouterOptions, PageRouter } from "../types";
+import Module from "module";
 
 export function createAppRouter<T>({
   layoutComponent = () => <Outlet />,
@@ -93,13 +94,10 @@ export async function getLoaderFn(path: string, data: Plugin["pages"]) {
 
   return lazyFn(() => item[1](), `loader`);
 }
-export async function loadRoutes() {
-  const apps: AnyRoute[] = [];
-  const pluginRoutesModules = import.meta.glob(
-    "../../../plugins/**/Pages/**/route.tsx",
 
-    {}
-  );
+type TpluginRoutesModules = Record<string, any>;
+export async function loadRoutes(pluginRoutesModules: TpluginRoutesModules) {
+  const apps: AnyRoute[] = [];
 
   for (let [path, file] of Object.entries(pluginRoutesModules)) {
     const plugin = (await await file()) as Plugin;
@@ -134,6 +132,7 @@ type createRouterOptionsType = Exclude<
 >;
 interface ICreateZedRouterProps extends createRouterOptionsType {
   rootRouter: RootRoute<unknown, any, any, any>;
+  plugins: TpluginRoutesModules;
 }
 
 const persistedCreateZedRouter = () => {
@@ -142,12 +141,13 @@ const persistedCreateZedRouter = () => {
   return {
     createZedRouter: ({
       rootRouter,
+      plugins,
       ...tanstakProps
     }: ICreateZedRouterProps) => {
       if (!rootRouter) return;
       if (!storedRootRouter) storedRootRouter = rootRouter;
 
-      const apps = loadRoutes();
+      const apps = loadRoutes(plugins);
       return apps.then((item) => {
         const routeTree = rootRouter.addChildren(item);
 

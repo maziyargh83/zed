@@ -8,8 +8,12 @@ const rootRouter = createRootRouteWithContext()({
     hello: () => Date.now(),
   }),
 });
+const plugins = import.meta.glob(
+  "../../../packages/plugins/**/Pages/**/route.tsx"
+);
 const router = createZedRouter({
   rootRouter: rootRouter,
+  plugins,
 });
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
