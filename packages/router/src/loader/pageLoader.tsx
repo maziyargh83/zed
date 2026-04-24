@@ -15,11 +15,12 @@ export function createAppRouter<T>({
   layoutComponent = () => <Outlet />,
   id,
   useIdPrefix = true,
+  rootRoute,
 }: CreateRouterOptions) {
   const ScopeRoutes: AnyRoute[] = [];
   const layout = `${id}-layout`;
   const layoutRoute = createRoute({
-    getParentRoute: () => getRootRouter(),
+    getParentRoute: () => rootRoute ?? getRootRouter(),
     id: layout,
     component: layoutComponent,
     notFoundComponent(props) {
@@ -74,8 +75,11 @@ export function createAppRouter<T>({
     page: createPage(pages),
   });
   return {
-    route: () => {
-      layoutRoute.addChildren(ScopeRoutes);
+    route: (addChilds = true) => {
+      if (addChilds) layoutRoute.addChildren(ScopeRoutes);
+      if (rootRoute) {
+        console.log(getRouter().routesById);
+      }
       return layoutRoute;
     },
     ...pageApi(ScopeRoutes),
